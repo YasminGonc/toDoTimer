@@ -13,6 +13,7 @@ export const CountdownContainer = styled.div`
     gap: 0.5rem;
 
     span {
+        width: 3.5rem;
         background-color: var(--darkDesaturatedBlue);
         padding: 0 0.5rem;
         border-radius: 8px;
@@ -24,5 +25,9 @@ export const CountdownContainer = styled.div`
 
     @media screen and (min-width: 1440px) {
         font-size: 5rem;
+
+        span {
+            width: 5rem;
+        }
     }
 `

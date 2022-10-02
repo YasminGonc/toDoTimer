@@ -1,13 +1,58 @@
-import { CountdownContainer } from "./styles";
+import { CountdownContainer } from './styles';
+
+import { useContext, useEffect, useState } from 'react';
+import { differenceInSeconds } from 'date-fns'
+import { CyclesContext } from '../../../../context/CyclesContext';
 
 export function Countdown() {
+    const { activeCycle, amountsSecondsPassed, setSecondsPast, markCycleAsCompleted } = useContext(CyclesContext);
+
+    const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0;
+    const currentSeconds = activeCycle ? totalSeconds - amountsSecondsPassed : 0;
+
+    const minutesAmount = Math.floor(currentSeconds / 60);
+    const secondsAmount = currentSeconds % 60;
+
+    const minutes = String(minutesAmount).padStart(2, '0');
+    const seconds = String(secondsAmount).padStart(2, '0');
+
+    useEffect(() => {
+        let interval: number;
+
+        if (activeCycle) {
+            interval = setInterval(() => {
+                const secondsDifference = differenceInSeconds(new Date(), activeCycle.startDate);
+
+                if (secondsDifference >= totalSeconds) {
+                    markCycleAsCompleted();
+                    setSecondsPast(totalSeconds);
+                    clearInterval(interval);
+                }
+                else {
+                    setSecondsPast(secondsDifference);
+                }
+
+            }, 1000);
+        }
+
+        return () => {
+            clearInterval(interval);
+        }
+    }, [activeCycle, totalSeconds, markCycleAsCompleted]);
+
+    useEffect(() => {
+        if (activeCycle) {
+            document.title=`${minutes} : ${seconds}`;
+        }
+    }, [activeCycle, minutes, seconds]);
+
     return (
         <CountdownContainer>
-            <span>0</span>
-            <span>0</span>
+            <span>{minutes[0]}</span>
+            <span>{minutes[1]}</span>
             <div>:</div>
-            <span>0</span>
-            <span>0</span>
+            <span>{seconds[0]}</span>
+            <span>{seconds[1]}</span>
         </CountdownContainer>
     )
 }
