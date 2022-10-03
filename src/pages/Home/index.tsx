@@ -9,6 +9,7 @@ import { Countdown } from './components/Countdown'
 import { NewCycleForm } from './components/NewCycleForm'
 import { CyclesContext, NewCycleFormData } from '../../context/CyclesContext'
 import { HandPalm, Play } from 'phosphor-react'
+import { TodoContext } from '../../context/TodoContext'
 
 const newCycleFormValidationSchema = zod.object({
     task: zod.string().min(1, 'Informe a tarefa'),
@@ -20,6 +21,8 @@ const newCycleFormValidationSchema = zod.object({
 
 export function Home() {
     const { activeCycle, createNewCycle, interruptCycle } = useContext(CyclesContext);
+
+    const { todos, createNewTodoFromTimer } = useContext(TodoContext);
 
     const newCycleForm = useForm<NewCycleFormData>({
         resolver: zodResolver(newCycleFormValidationSchema),
@@ -33,6 +36,13 @@ export function Home() {
 
     function handleCreateNewCycle(data: NewCycleFormData) {
         createNewCycle(data);
+        
+        const searchForTodosTask = todos.find(todo => todo.todo == data.task);
+
+        if (searchForTodosTask == undefined) {
+            createNewTodoFromTimer(data.task);
+        }
+        
         reset();
     }
 

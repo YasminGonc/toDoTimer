@@ -3,9 +3,12 @@ import { CountdownContainer } from './styles';
 import { useContext, useEffect, useState } from 'react';
 import { differenceInSeconds } from 'date-fns'
 import { CyclesContext } from '../../../../context/CyclesContext';
+import { TodoContext } from '../../../../context/TodoContext';
 
 export function Countdown() {
     const { activeCycle, amountsSecondsPassed, setSecondsPast, markCycleAsCompleted } = useContext(CyclesContext);
+
+    const { updateTodoAsCompleted } = useContext(TodoContext);
 
     const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0;
     const currentSeconds = activeCycle ? totalSeconds - amountsSecondsPassed : 0;
@@ -25,6 +28,7 @@ export function Countdown() {
 
                 if (secondsDifference >= totalSeconds) {
                     markCycleAsCompleted();
+                    updateTodoAsCompleted(activeCycle.task);
                     setSecondsPast(totalSeconds);
                     clearInterval(interval);
                 }

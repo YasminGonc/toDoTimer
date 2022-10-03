@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState } from 'react'
+import { createContext, ReactNode, useContext, useState } from 'react'
 
 import SoundAlert from '../assets/sounds/mixkit-happy-bells-notification.wav'
 
@@ -63,7 +63,7 @@ export function CyclesContextProvider({ children }: CyclesContextProviderProps) 
     }
 
     function interruptCycle() {
-        setCycles(state => 
+        setCycles(state =>
             state.map(cycle => {
                 if (cycle.id == activeCycleId) {
                     return { ...cycle, interruptedDate: new Date() }
@@ -98,10 +98,10 @@ export function CyclesContextProvider({ children }: CyclesContextProviderProps) 
         alertSound.play();
     }
 
-    return(
+    return (
         <CyclesContext.Provider value={{ cycles, activeCycle, amountsSecondsPassed, createNewCycle, setSecondsPast, interruptCycle, markCycleAsCompleted }}>
             {children}
         </CyclesContext.Provider>
-        
+
     )
 }

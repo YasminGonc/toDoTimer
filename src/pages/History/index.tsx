@@ -1,6 +1,13 @@
 import { HistoryContainer, TableContainer } from './styles'
 
+import { useContext } from 'react'
+import { CyclesContext } from '../../context/CyclesContext'
+import { formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/esm/locale'
+
 export function History() {
+    const { cycles } = useContext(CyclesContext)
+    
     return (
         <HistoryContainer>
             <h1>Meu histórico</h1>
@@ -15,18 +22,24 @@ export function History() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Tarefa1</td>
-                            <td>25 minutos</td>
-                            <td>Há 1 hora</td>
-                            <td>Completa</td>
-                        </tr>
-                        <tr>
-                            <td>Tarefa1</td>
-                            <td>25 minutos</td>
-                            <td>Há 1 hora</td>
-                            <td>Completa</td>
-                        </tr>
+                        {cycles.map((cycle) => {
+                            return(
+                                <tr key={cycle.id}>
+                                    <td>{cycle.task}</td>
+                                    <td>{cycle.minutesAmount} minutos</td>
+                                    <td>
+                                        {formatDistanceToNow(new Date(cycle.startDate), {
+                                            addSuffix: true,
+                                            locale: ptBR,
+                                        })}
+                                    </td>
+
+                                    {cycle.finishedDate && (<td>Concluído</td>)}
+                                    {cycle.interruptedDate && (<td>Interrompido</td>)}
+                                    {!cycle.finishedDate && !cycle.interruptedDate && (<td>Em andamento</td>)}
+                                </tr>
+                            )
+                        })}
                     </tbody>
                 </table>
             </TableContainer>

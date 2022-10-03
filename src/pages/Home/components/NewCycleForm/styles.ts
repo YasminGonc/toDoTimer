@@ -22,4 +22,8 @@ export const TaskInput = styled(Input)``
 
 export const MinutesAmountInput = styled(Input)`
    width: 2.5rem;
+
+   &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+   }
 `
