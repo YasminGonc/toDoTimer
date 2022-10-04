@@ -32,17 +32,20 @@ export function Home() {
         }
     });
 
-    const { handleSubmit, reset, watch, formState } = newCycleForm;
+    const { handleSubmit, watch, reset, formState } = newCycleForm;
 
     function handleCreateNewCycle(data: NewCycleFormData) {
         createNewCycle(data);
-        
+
         const searchForTodosTask = todos.find(todo => todo.todo == data.task);
 
         if (searchForTodosTask == undefined) {
             createNewTodoFromTimer(data.task);
         }
-        
+    }
+
+    function handleInterruptCycle() {
+        interruptCycle();
         reset();
     }
 
@@ -54,17 +57,17 @@ export function Home() {
             <form onSubmit={handleSubmit(handleCreateNewCycle)}>
                 <FormProvider {...newCycleForm}>
                     <NewCycleForm />
+
+                    <ErrorContainer>
+                        <p>{formState.errors.task?.message}</p>
+                        <p>{formState.errors.minutesAmount?.message}</p>
+                    </ErrorContainer>
+
+                    <Countdown />
                 </FormProvider>
 
-                <ErrorContainer>
-                    <p>{formState.errors.task?.message}</p>
-                    <p>{formState.errors.minutesAmount?.message}</p>
-                </ErrorContainer>
-                
-                <Countdown />
-
-                { activeCycle ? (
-                    <StopButton type="button" onClick={interruptCycle}>
+                {activeCycle ? (
+                    <StopButton type="button" onClick={handleInterruptCycle}>
                         <HandPalm />
                         Interromper
                     </StopButton>

@@ -1,5 +1,4 @@
-import { createContext, ReactNode, useContext, useState } from 'react'
-import { CyclesContext } from './CyclesContext';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 
 interface Todo {
     id: string;
@@ -26,9 +25,16 @@ interface TodoContextProviderProps {
 }
 
 export function TodoContextProvider({ children }: TodoContextProviderProps) {
-    const [todos, setTodos] = useState<Todo[]>([]);
+    const [todos, setTodos] = useState<Todo[]>(() => {
+        const storageValue = localStorage.getItem('@toDoTimer:todos');
 
-    const { cycles } = useContext(CyclesContext);
+        if (storageValue) {
+            return JSON.parse(storageValue);
+        }
+        else {
+            return [];
+        }
+    });
 
     function createNewTodo(data: TaskData) {
         const id = String(new Date().getTime());
@@ -62,7 +68,11 @@ export function TodoContextProvider({ children }: TodoContextProviderProps) {
         setTodos(completedTodos);
     }
 
-    //console.log(todos);
+    useEffect(() => {
+        const todosJSON = JSON.stringify(todos);
+
+        localStorage.setItem('@toDoTimer:todos', todosJSON);
+    }, [todos]);
     
     return(
         <TodoContext.Provider value={{ todos, createNewTodo, createNewTodoFromTimer, deleteTodo, updateTodoAsCompleted }}>

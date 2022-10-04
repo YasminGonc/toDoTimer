@@ -1,10 +1,10 @@
 import styled from 'styled-components'
 
 export const HistoryContainer = styled.div`
-    //background-color: red;
     height: 80vh;
     width: 80%;
     margin: 0 auto;
+    overflow: auto;
 
     display: flex;
     flex-direction: column;
@@ -16,7 +16,6 @@ export const HistoryContainer = styled.div`
 `
 export const TableContainer = styled.div`
     flex: 1;
-    overflow: auto;
     margin-top: 2rem;
 
     table {

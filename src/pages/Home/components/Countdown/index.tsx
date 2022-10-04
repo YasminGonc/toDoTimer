@@ -4,8 +4,11 @@ import { useContext, useEffect, useState } from 'react';
 import { differenceInSeconds } from 'date-fns'
 import { CyclesContext } from '../../../../context/CyclesContext';
 import { TodoContext } from '../../../../context/TodoContext';
+import { useFormContext } from 'react-hook-form';
 
 export function Countdown() {
+    const { reset } = useFormContext();
+    
     const { activeCycle, amountsSecondsPassed, setSecondsPast, markCycleAsCompleted } = useContext(CyclesContext);
 
     const { updateTodoAsCompleted } = useContext(TodoContext);
@@ -24,13 +27,14 @@ export function Countdown() {
 
         if (activeCycle) {
             interval = setInterval(() => {
-                const secondsDifference = differenceInSeconds(new Date(), activeCycle.startDate);
+                const secondsDifference = differenceInSeconds(new Date(), new Date(activeCycle.startDate));
 
                 if (secondsDifference >= totalSeconds) {
                     markCycleAsCompleted();
                     updateTodoAsCompleted(activeCycle.task);
                     setSecondsPast(totalSeconds);
                     clearInterval(interval);
+                    reset();
                 }
                 else {
                     setSecondsPast(secondsDifference);

@@ -1,15 +1,7 @@
-import { createContext, ReactNode, useContext, useState } from 'react'
+import { createContext, ReactNode, useContext, useEffect, useReducer, useState } from 'react'
 
 import SoundAlert from '../assets/sounds/mixkit-happy-bells-notification.wav'
-
-interface Cycles {
-    id: string;
-    task: string;
-    minutesAmount: number;
-    startDate: Date;
-    interruptedDate?: Date;
-    finishedDate?: Date;
-}
+import { ActionTypes, Cycles, cyclesReducer } from '../reducers/cycles';
 
 export interface NewCycleFormData {
     task: string;
@@ -33,11 +25,26 @@ interface CyclesContextProviderProps {
 }
 
 export function CyclesContextProvider({ children }: CyclesContextProviderProps) {
-    const [cycles, setCycles] = useState<Cycles[]>([]);
+    const [cyclesState, dispatch] = useReducer(cyclesReducer, {
+        cycles: [],
+        activeCycleId: null,
+    }, () => {
+        const storageStateJSON = localStorage.getItem('@toDoTimer:cycles');
 
-    const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
+        if (storageStateJSON) {
+            return JSON.parse(storageStateJSON);
+        }
+        else {
+            return {
+                cycles: [],
+                activeCycleId: null,
+            }
+        }
+    });
 
     const [amountsSecondsPassed, setAmountsSecondsPassed] = useState(0);
+
+    const { cycles, activeCycleId } = cyclesState;
 
     const activeCycle = cycles.find(cycle => cycle.id === activeCycleId);
 
@@ -57,46 +64,45 @@ export function CyclesContextProvider({ children }: CyclesContextProviderProps) 
             startDate: new Date(),
         }
 
-        setCycles(state => [...state, newCycle]);
-        setActiveCycleId(id);
+        dispatch({
+            type: ActionTypes.ADD_NEW_CYCLE,
+            payload: {
+                newCycle
+            },
+        });
+
         setAmountsSecondsPassed(0);
     }
 
     function interruptCycle() {
-        setCycles(state =>
-            state.map(cycle => {
-                if (cycle.id == activeCycleId) {
-                    return { ...cycle, interruptedDate: new Date() }
-                }
-                else {
-                    return cycle
-                }
-            })
-        );
-
-        setActiveCycleId(null);
+        dispatch({
+            type: ActionTypes.INTERRUPT_CYCLE,
+            payload: {
+                activeCycleId,
+            },
+        });
 
         document.title = 'To Do Timer'
     }
 
     function markCycleAsCompleted() {
-        setCycles(state =>
-            state.map(cycle => {
-                if (cycle.id == activeCycleId) {
-                    return { ...cycle, finishedDate: new Date() }
-                }
-                else {
-                    return cycle
-                }
-            })
-        );
-
-        setActiveCycleId(null);
+        dispatch({
+            type: ActionTypes.MARK_CYCLE_AS_COMPLETED,
+            payload: {
+                activeCycleId,
+            },
+        });
 
         document.title = 'To Do Timer'
 
         alertSound.play();
     }
+
+    useEffect(() => {
+        const stateJSON = JSON.stringify(cyclesState);
+
+        localStorage.setItem('@toDoTimer:cycles', stateJSON);
+    }, [cyclesState]);
 
     return (
         <CyclesContext.Provider value={{ cycles, activeCycle, amountsSecondsPassed, createNewCycle, setSecondsPast, interruptCycle, markCycleAsCompleted }}>
