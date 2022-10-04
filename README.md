@@ -30,6 +30,8 @@ Caso prefira abrir a aplicação no localhost basta digitar o comando `npm run d
 
 ## Vídeo da aplicação
 
+https://loom.com/share/0f3d5603678347999859bc935f994126
+
 ## Design da aplicação
 
 <img src=" " width="600">
