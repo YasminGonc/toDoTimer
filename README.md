@@ -36,7 +36,7 @@ https://loom.com/share/0f3d5603678347999859bc935f994126
 
 <img src="assetsGH/home.png" width="600">
 <img src="assetsGH/todo.png" width="600">
-<img src="assetsGH/historico.png" width="600">
+<img src="assetsGH/hitorico.png" width="600">
 
 ## Dados complementares
 
